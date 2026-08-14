@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  prev: CollectionEntry<'modules'> | null;
+  next: CollectionEntry<'modules'> | null;
+}
+
+const { prev, next } = Astro.props;
+const num = (c: CollectionEntry<'modules'>) => `M${String(c.data.order).padStart(2, '0')}`;
+---
+
+<nav class="prevnext" aria-label="上下章导航">
+  {prev ? (
+    <a class="prev-card" href={`/modules/${prev.id}`}>
+      <span class="label">← {num(prev)} · 上一章</span>
+      <span class="title">{prev.data.title}</span>
+    </a>
+  ) : (
+    <span class="prev-card placeholder"></span>
+  )}
+  {next ? (
+    <a class="next-card" href={`/modules/${next.id}`}>
+      <span class="label">{num(next)} · 下一章 →</span>
+      <span class="title">{next.data.title}</span>
+    </a>
+  ) : (
+    <span class="next-card placeholder"></span>
+  )}
+</nav>

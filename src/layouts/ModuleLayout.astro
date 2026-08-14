@@ -1,0 +1,82 @@
+---
+import Base from './Base.astro';
+import TocSidebar from '../components/TocSidebar.astro';
+import OutlineNav from '../components/OutlineNav.astro';
+import PrevNext from '../components/PrevNext.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  module: CollectionEntry<'modules'>;
+  headings: { depth: number; slug: string; text: string }[];
+  prev: CollectionEntry<'modules'> | null;
+  next: CollectionEntry<'modules'> | null;
+}
+
+const { module, headings, prev, next } = Astro.props;
+const num = `M${String(module.data.order).padStart(2, '0')}`;
+const outline = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+<Base title={`${module.data.title} | DeepSeek Harness Book`} description={module.data.summary}>
+  <header class="topbar">
+    <div class="left-cluster">
+      <button class="hamburger" id="drawer-toggle" type="button" aria-label="打开目录" aria-expanded="false">
+        ☰
+      </button>
+      <a href="/" class="brand">DeepSeek Harness <span class="brand-accent">·</span> Book</a>
+    </div>
+    <nav class="crumb" aria-label="面包屑">
+      <span class="crumb-num">{num}</span> / {module.data.title}
+    </nav>
+    <div class="actions">
+      <button
+        class="icon-btn"
+        type="button"
+        data-immersive-toggle
+        aria-pressed="false"
+        aria-label="切换沉浸式阅读"
+        title="沉浸式阅读 (F)"
+      >
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 4.5h5v11H3zM12 4.5h5v11h-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M7.5 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1.5 2" />
+        </svg>
+        <span class="label">沉浸式阅读</span>
+      </button>
+      <button
+        class="icon-btn"
+        type="button"
+        data-theme-toggle
+        aria-label="切换深浅色模式"
+        title="切换主题 (T)"
+      >
+        <span class="theme-icons" aria-hidden="true"><span>☀</span><span>☾</span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="module-shell">
+    <TocSidebar current={module} />
+    <main class="module-main">
+      <article class="prose" id="article">
+        <header class="article-head">
+          <p class="article-eyebrow">{num}</p>
+          <h1>{module.data.title}</h1>
+          <p class="article-summary">{module.data.summary}</p>
+          <div class="article-meta">
+            <span>{module.data.words}字</span>
+            <span>· 含{module.data.codeLines}行代码</span>
+            <span>· 约{module.data.minutes}分钟</span>
+            {module.data.updated && <span>· 更新于 {module.data.updated}</span>}
+          </div>
+        </header>
+        <slot />
+      </article>
+    </main>
+    <aside class="outline-right">
+      <OutlineNav headings={outline} />
+    </aside>
+  </div>
+
+  <PrevNext prev={prev} next={next} />
+</Base>

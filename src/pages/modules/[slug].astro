@@ -1,0 +1,37 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+export async function getStaticPaths() {
+  const modules = await getCollection('modules');
+  return modules.map((m) => ({ params: { slug: m.id }, props: { module: m } }));
+}
+
+const { module } = Astro.props;
+const { Content, headings } = await render(module);
+const all = (await getCollection('modules')).sort((a, b) => a.data.order - b.data.order);
+const idx = all.findIndex((m) => m.id === module.id);
+const prev = idx > 0 ? all[idx - 1] : null;
+const next = idx < all.length - 1 ? all[idx + 1] : null;
+const num = `M${String(module.data.order).padStart(2, '0')}`;
+---
+
+{
+  module.data.status === 'published' ? (
+    <ModuleLayout module={module} headings={headings} prev={prev} next={next}>
+      <Content />
+    </ModuleLayout>
+  ) : (
+    <Base title={`${module.data.title} | DeepSeek Harness Book`} description={module.data.summary}>
+      <div class="placeholder-page">
+        <p class="ph-eyebrow">{num}</p>
+        <h1>{module.data.title}</h1>
+        <p>{module.data.summary}</p>
+        <p>本章正在撰写中，敬请期待。</p>
+        <a class="ph-cta" href="/">← 返回首页</a>
+      </div>
+    </Base>
+  )
+}

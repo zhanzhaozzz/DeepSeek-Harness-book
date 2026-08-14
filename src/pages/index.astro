@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ModuleCard from '../components/ModuleCard.astro';
+
+const modules = (await getCollection('modules')).sort((a, b) => a.data.order - b.data.order);
+const firstPublished = modules.find((m) => m.data.status === 'published');
+---
+
+<Base>
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <p class="hero-eyebrow">源码精读笔记</p>
+        <h1 class="hero-title">DeepSeek Harness</h1>
+        <div class="hero-rule"></div>
+        <div class="hero-persona">
+          <p>如果你正在开发 AI Agent</p>
+          <p>想学习生产级 Harness 的设计</p>
+          <p>想搞懂「一切皆插件」是怎么落地的</p>
+          <p class="hero-persona-tail">—— 这本笔记是给你的</p>
+        </div>
+        <a class="hero-cta" href={`/modules/${firstPublished?.id ?? 'ch01-overview'}`}>开始阅读 →</a>
+      </div>
+      <aside class="hero-right">
+        <aside class="book-intro">
+          <div class="book-intro-heading">◆ 关于 DeepSeek Harness</div>
+          <p class="book-intro-desc">
+            DeepSeek Harness（dsh）是 DeepSeek 开源的 Agent Harness：一切皆插件，基于 Cordis
+            构建，没有特权核心，每个部件都可以从配置替换。
+          </p>
+          <a
+            class="book-intro-link"
+            href="https://github.com/deepseek-ai/deepseek-harness"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            → github.com/deepseek-ai/deepseek-harness
+          </a>
+        </aside>
+      </aside>
+    </div>
+  </section>
+
+  <section class="all-modules">
+    <h2 class="section-title">全部章节</h2>
+    <p class="section-note">
+      本书以 TypeScript 主线逐章精读 DeepSeek Harness 源码：每章摘录真实代码并标注仓库路径，共 12 章。
+    </p>
+    <div class="modules-grid">
+      {modules.map((m) => <ModuleCard module={m} />)}
+    </div>
+  </section>
+</Base>

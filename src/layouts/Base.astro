@@ -1,0 +1,137 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const SITE_TITLE = 'DeepSeek Harness Book · 源码精读笔记';
+const SITE_DESC =
+  'DeepSeek Harness 源码精读笔记：一本带你逐章拆解生产级 Agent Harness 的在线学习书。';
+
+const { title = SITE_TITLE, description = SITE_DESC } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <!-- 字体加载（preconnect + display=swap） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- 反 FOUC：在 HTML 渲染前确定主题与沉浸式状态 -->
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('dsh-book:theme');
+        const mql = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = stored ?? (mql ? 'dark' : 'light');
+        document.documentElement.dataset.immersive =
+          localStorage.getItem('dsh-book:immersive') === '1' ? '1' : '0';
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <Footer />
+    <script>
+      const THEME_KEY = 'dsh-book:theme';
+      const IMMERSIVE_KEY = 'dsh-book:immersive';
+      const root = document.documentElement;
+
+      const currentTheme = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+      function setTheme(theme: string) {
+        root.dataset.theme = theme;
+        localStorage.setItem(THEME_KEY, theme);
+      }
+
+      function setImmersive(v: boolean) {
+        root.dataset.immersive = v ? '1' : '0';
+        localStorage.setItem(IMMERSIVE_KEY, v ? '1' : '0');
+        document
+          .querySelectorAll('[data-immersive-toggle]')
+          .forEach((b) => b.setAttribute('aria-pressed', String(v)));
+      }
+
+      function setDrawer(open: boolean) {
+        document.body.classList.toggle('drawer-open', open);
+        const hb = document.getElementById('drawer-toggle');
+        if (hb) hb.setAttribute('aria-expanded', String(open));
+      }
+
+      // 主题切换（顶栏与页脚共用 data-theme-toggle）
+      document.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('[data-theme-toggle]')) {
+          setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+        }
+      });
+
+      // 沉浸式阅读（章节页）
+      document.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('[data-immersive-toggle]')) {
+          setImmersive(root.dataset.immersive !== '1');
+        }
+      });
+
+      // 移动端目录抽屉
+      document.addEventListener('click', (e) => {
+        const t = e.target as Element;
+        if (t.closest('#drawer-toggle')) {
+          setDrawer(!document.body.classList.contains('drawer-open'));
+        } else if (t.closest('[data-drawer-backdrop]') || t.closest('.toc-item a')) {
+          setDrawer(false);
+        }
+      });
+
+      // 左侧目录折叠
+      document.addEventListener('click', (e) => {
+        const t = (e.target as Element).closest('#toc-toggle') as HTMLElement | null;
+        if (t) {
+          const expanded = t.getAttribute('aria-expanded') === 'true';
+          t.setAttribute('aria-expanded', String(!expanded));
+        }
+      });
+
+      // 快捷键：T 主题 / F 沉浸式 / Esc 关抽屉
+      document.addEventListener('keydown', (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const el = e.target as HTMLElement | null;
+        const tag = el?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el?.isContentEditable) return;
+        if (e.key === 't' || e.key === 'T') setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+        if (e.key === 'f' || e.key === 'F') setImmersive(root.dataset.immersive !== '1');
+        if (e.key === 'Escape') setDrawer(false);
+      });
+
+      // 右侧大纲滚动监听
+      const links = Array.from(document.querySelectorAll('#outline-nav a'));
+      const heads = Array.from(document.querySelectorAll('#article h2[id], #article h3[id]'));
+      if (links.length && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              for (const link of links) {
+                link.classList.toggle('is-active', link.getAttribute('href') === '#' + entry.target.id);
+              }
+            }
+          },
+          { rootMargin: '-15% 0px -75% 0px' },
+        );
+        heads.forEach((h) => io.observe(h));
+      }
+    </script>
+  </body>
+</html>

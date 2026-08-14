@@ -1,0 +1,16 @@
+{
+  "name": "dsh-book",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DeepSeek Harness 源码精读笔记 —— 一个静态学习网站（Astro）",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "allowScripts": {}
+}

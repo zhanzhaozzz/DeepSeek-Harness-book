@@ -1,0 +1,18 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+---
+
+<nav class="outline-nav" id="outline-nav" aria-label="本页目录">
+  <p class="outline-title">本页目录</p>
+  <ul>
+    {headings.map((h) => (
+      <li class:list={[`depth-${h.depth}`]}>
+        <a href={`#${h.slug}`}>{h.text}</a>
+      </li>
+    ))}
+  </ul>
+</nav>

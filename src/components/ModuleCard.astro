@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  module: CollectionEntry<'modules'>;
+}
+
+const { module: m } = Astro.props;
+const num = `M${String(m.data.order).padStart(2, '0')}`;
+const published = m.data.status === 'published';
+---
+
+<article class="module-card">
+  <div class="card-eyebrow">{num}</div>
+  <h3 class="card-title">{m.data.title}</h3>
+  <p class="card-summary">{m.data.summary}</p>
+  {published ? (
+    <div class="card-meta">
+      <span>{m.data.words}字</span>
+      <span>· 含{m.data.codeLines}行代码</span>
+      <span>· 约{m.data.minutes}分钟</span>
+    </div>
+  ) : (
+    <div class="card-meta">
+      <span class="badge">撰写中</span>
+    </div>
+  )}
+  <div class="card-actions">
+    {published ? (
+      <a class="variant-btn" href={`/modules/${m.id}`}>阅读 →</a>
+    ) : (
+      <span class="variant-btn is-disabled">撰写中</span>
+    )}
+  </div>
+</article>
