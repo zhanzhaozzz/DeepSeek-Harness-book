@@ -8,6 +8,29 @@ const firstPublished = modules.find((m) => m.data.status === 'published');
 ---
 
 <Base>
+  <aside class="archive-notice" aria-label="历史存档说明">
+    <div class="archive-notice-inner">
+      <div class="archive-notice-copy">
+        <p class="archive-notice-eyebrow">◆ 历史存档 · 官方 0.1.0-rc.6</p>
+        <p class="archive-notice-lead">
+          本站是对照官方 <span class="archive-notice-ver">0.1.0-rc.6</span> 的<span class="archive-notice-keep">旧版存档</span>，<span class="archive-notice-keep">章节仍可阅读。</span>
+        </p>
+        <p class="archive-notice-text">
+          当前笔记（17 章，对照官方 <span class="archive-notice-ver">dsh-v0.2.3-alpha.2</span>）在新站点。
+        </p>
+      </div>
+      <a
+        class="archive-notice-cta"
+        href="https://deepseek-harness-book-v2.vercel.app"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="archive-notice-cta-label">前往当前笔记 →</span>
+        <span class="archive-notice-cta-host">deepseek-harness-book-v2.vercel.app</span>
+      </a>
+    </div>
+  </aside>
+
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-left">

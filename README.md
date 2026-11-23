@@ -1,5 +1,7 @@
 # dsh-book · DeepSeek Harness 源码精读笔记
 
+> **历史存档（官方 0.1.0-rc.6）。** 本仓库与[线上站点](https://deep-seek-harness-book.vercel.app/)保留的是旧版笔记，章节页面仍可阅读。当前笔记（17 章，对照官方 `dsh-v0.2.3-alpha.2`）在 [deepseek-harness-book-v2.vercel.app](https://deepseek-harness-book-v2.vercel.app)。
+
 一个静态学习网站：以"书"的形式逐章精读 [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) 源码。
 设计语言参考 [Pi Agent Book](https://dg-ai-notes.pages.dev/)（源码精读笔记），强调色替换为 DeepSeek 品牌蓝。
 
